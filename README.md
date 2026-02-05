@@ -47,7 +47,8 @@ In enterprise scenarios, **both scanner appliances and cloud agents should be de
 2. [Setting Configurations](#setting-configurations-anchor-point)
 3. [Scanning and Scan Profiles](#scanning-and-scan-profiles-anchor-point)
 4. [Logs and Remediation](#logs-and-remediation-anchor-point)
-5. [Challenges Solutions](#challenges-solutions-anchor-point)
+5. [Vulnerability Exceptions](vulnerability-exceptions-anchor-point)
+6. [Challenges Solutions](#challenges-solutions-anchor-point)
 
 ---
 
@@ -169,8 +170,9 @@ In the Qualys homepage navigate to:
 <img width="670" height="573" alt="image" src="https://github.com/user-attachments/assets/34dae88b-6354-49ac-b2b1-8d9de502ca5d" />
 
 Fill in:
-* Name: Basic Net Scan
-* Leave settings as default > Save
+* Option Profile Title > Name: Basic Net Scan
+* Option Profile Title > Set this as the default option profile when launching maps and scans: Enabled
+* Save
 
 <img width="714" height="851" alt="image" src="https://github.com/user-attachments/assets/7a9755e0-0d1e-4446-8224-ab23cb17ed32" />
 
@@ -182,6 +184,7 @@ Fill in:
 
 <img width="677" height="176" alt="image" src="https://github.com/user-attachments/assets/6c065754-cdd6-4c02-95a6-e8250c5ca5e3" />
 
+Fill in:
 * Title: Win11 Unauth Scan Host-Only
 * Option Profile: Basic Net Scan
 * Scanner Appliance: TestVA
@@ -205,6 +208,8 @@ Settings needed:
   * Local admins get full admin rights remotely. This allows Qualys to do authenticated scans properly without checks silently failing or _appearing_ to succeed
 
 > **Note:** These settings should be **temporary** and reverted after scanning. While there is no real risk as only machines on the 192.168.57.0/24 range can connect during the scan (and there are no other machines on the 192.168.57.0/24 range), leaving these settings enabled weakens protections and creates a bigger attack vector. Thus, we must revert these settings after authenticated scanning. These practices align with industry standard of only temporarily enabling these settings/managing them via group policy/using domain credentials.
+> 
+> <a href="https://github.com/alex-mtran/windows-authenticated-scan-setup"  target="_blank" rel="noopener noreferrer">PowerShell automation scripts for enabling and disabling scan settings</a>).
 
 #### Configure Authenticated Scan in Qualys
 
@@ -213,7 +218,6 @@ Settings needed:
 <img width="771" height="675" alt="image" src="https://github.com/user-attachments/assets/1162a1e7-0d23-4cb8-9017-c5c86f1d0b01" />
 
 Fill in:
-
 * Record Title > Title: Win11 Credentials
 * Login Credentials > Windows Authentication : Enable Local
 * Login Credentials > Login : Basic authentication : username/password
@@ -313,6 +317,55 @@ This approach maximizes remediation value by:
 
 ---
 
+<a name="vulnerability-exceptions-anchor-point"></a>
+## Vulnerability Exceptions
+
+After systematically remediating vulnerabilities identified in the authenticated scan report, several findings remained that did not need remediation. These fell into two categories:
+
+**False Positives**
+Vulnerabilities flagged due to outdated scanner signatures that do not account for modern operating system protections.
+
+*Example: QID 82005* - Predictable TCP Initial Sequence Numbers vulnerability applies only to legacy operating systems (Windows NT/95/98). Modern Windows systems implement RFC 6528-compliant randomized TCP sequence number generation, rendering this detection obsolete.
+
+**Accepted Risk**  
+Technically valid vulnerabilities that pose minimal risk given the controlled home lab environment and existing security controls.
+
+*Example: QID 92064* - SMBv2 Signing Not Required poses negligible risk in a home lab network secured with WPA3 encryption. Man-in-the-middle exploitation is likely minimal given the trusted network perimeter and wireless security.
+
+To maintain clean scan results and focus on actionable vulnerabilities, these findings can be added to an exception list. Qualys allows for exception management through asset filtering and enabling exceptions to be specified for specific IP ranges and/or asset groups.
+
+In the Qualys homepage navigate to:
+
+**Scans > Search Lists > New > Static List**
+
+<img width="723" height="322" alt="image" src="https://github.com/user-attachments/assets/6528e5de-c01c-4f11-9aa1-13299162ba53" />
+
+Fill in:
+* GeneralInformation > Title: Windows11 HomeLab Exceptions
+* QIDs > Manual: Input IPs (Example: 6, 1200-1210) > OK
+* Save
+
+<img width="604" height="396" alt="image" src="https://github.com/user-attachments/assets/4332d111-a4f3-4016-9386-984ade5fc0e7" />
+
+<img width="865" height="190" alt="image" src="https://github.com/user-attachments/assets/e0c59478-0a86-42f8-8e80-3ff05c5f595a" />
+
+After creating the exception list, update desired scan profile to exclude these QIDs from future reports. 
+
+> **Note**: In Qualys Community Edition, only one scan profile is available. Therefore, we'll modify the existing `Basic Net Scan` profile rather than creating a new one.
+
+**Scans > Option Profiles > Basic Net Scan > Down Arrow > Edit**
+
+<img width="946" height="273" alt="image" src="https://github.com/user-attachments/assets/ff947162-98bf-4402-be6a-597149281127" />
+
+* Scan > Exclude > Excluded QIDs: Enabled > Add Lists > `Windows11 HomeLab Exceptions` > OK
+* Save
+
+<img width="1654" height="172" alt="image" src="https://github.com/user-attachments/assets/7d94175f-04b6-48cb-a177-715dd7613069" />
+
+Run the `Basic Net Scan` again to verify that excluded QIDs no longer appear in the scan results.
+
+---
+
 <a name="challenges-solutions-anchor-point"></a>
 ## Challenges Solutions
 
@@ -325,8 +378,6 @@ A mismatch between the Qualys scanner’s network configuration and VirtualBox a
 * Configure **dual adapters**: NAT (for cloud connectivity) + Host-Only (for local scans)
 
 > **Note:** This dual-homed configuration aligns with common industry practices by separating management and cloud communication traffic from internal scanning traffic, restoring full scanner functionality in both scenarios.
-
-Manual remediation and authenticated scan verification were time-consuming, leading to PowerShell automation scripts: <a href="https://github.com/alex-mtran/windows-authenticated-scan-setup"  target="_blank" rel="noopener noreferrer">Windows Authenticated Scan Setup</a>).
 
 Future expansion:
 * Add more devices (IoT, network infrastructure, different operating systems, etc.)
