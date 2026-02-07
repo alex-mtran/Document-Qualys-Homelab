@@ -9,36 +9,28 @@ Of the Qualys Vulnerability Management Lifecycle phase, this documentation will 
 
 Qualys offers two primary approaches for vulnerability management: the **Virtual Scanner Appliance** and **Cloud Agent**. In an ideal, comprehensive homelab environment, both would be deployed as they provide distinct yet complementary scanning capabilities.
 
-For this homelab, I chose to implement **only the Virtual Scanner Appliance** for the following reasons:
+For this homelab, I chose to implement only the Virtual Scanner Appliance for the following reasons:
 
-- **Static environment**: My homelab consists of on-premise assets with controlled, predictable configurations
-- **Sufficient coverage**: Network-based scanning adequately covers my use case for point-in-time vulnerability assessments
-- **Acceptable scan frequency**: Weekly scheduled scans meet my security monitoring needs
-- **Tolerable performance impact**: I can accommodate network performance degradation during deep scans
+* Static environment: My homelab consists of on-premise assets with controlled, predictable configurations
+* Sufficient coverage: Network-based scanning adequately covers my use case for point-in-time vulnerability assessments
+* Acceptable scan frequency: Daily scheduled scans meet my security monitoring needs
+* Tolerable performance impact: I can accommodate network performance degradation during deep scans
 
-**This approach is NOT recommended for production or enterprise environments.**
-
-**Gaps with scanner-only deployment:**
-- **No real-time visibility**: Vulnerabilities discovered only during scheduled scans
-- **Coverage blind spots**: Roaming laptops, remote workers, and non-persistent VMs (VDI) may be missed between scans
-- **Limited accuracy**: External scanning lacks the depth and context of authenticated, agent-based assessments
-- **Network performance**: Deep scans can impact production networks—acceptable in a homelab but problematic at scale
-
-In enterprise scenarios, **both scanner appliances and cloud agents should be deployed** to ensure comprehensive coverage, continuous monitoring, and minimal operational impact.
+This approach is NOT recommended for production or enterprise environments. In enterprise scenarios, both scanner appliances and cloud agents should be deployed to ensure comprehensive coverage, continuous monitoring, and minimal operational impact.
 
 #### Key Differences
 
 **Virtual Scanner Appliance**
-- Network-based scanning solution that scans entire networks from the perimeter
-- Capable of discovering and assessing devices that cannot install agents (e.g., IoT devices, network equipment)
-- Detects remote-only vulnerabilities and performs unauthenticated scans
-- Operates on a scheduled scan basis (weekly, daily, etc.)
+* Network-based scanning solution that scans entire networks from the perimeter
+* Capable of discovering and assessing devices that cannot install agents (e.g., IoT devices, network equipment)
+* Detects remote-only vulnerabilities and performs unauthenticated scans
+* Operates on a scheduled scan basis (weekly, daily, etc.)
 
 **Cloud Agent**
-- Lightweight agent installed directly on endpoints
-- Provides continuous, real-time authenticated scanning
-- Ideal for dynamic, remote, or cloud-based assets
-- Offers deeper visibility into system configurations and installed software
+* Lightweight agent installed directly on endpoints
+* Provides continuous, real-time authenticated scanning
+* Ideal for dynamic, remote, or cloud-based assets
+* Offers deeper visibility into system configurations and installed software
 
 ---
 
@@ -47,7 +39,7 @@ In enterprise scenarios, **both scanner appliances and cloud agents should be de
 2. [Setting Configurations](#setting-configurations-anchor-point)
 3. [Scanning and Scan Profiles](#scanning-and-scan-profiles-anchor-point)
 4. [Scan Scheduling and Task Scheduler](#scan-scheduling-and-task-scheduler-anchor-point)
-5. [Logs and Remediation](#logs-and-remediation-anchor-point)
+5. [Logs Remediation and Reports](#logs-remediation-and-reports-anchor-point)
 6. [Vulnerability Exceptions](vulnerability-exceptions-anchor-point)
 7. [Challenges Solutions](#challenges-solutions-anchor-point)
 
@@ -56,9 +48,9 @@ In enterprise scenarios, **both scanner appliances and cloud agents should be de
 <a name="initial-setup-anchor-point"></a>
 ## Initial Setup
 
-**Agent(s):** Windows 11 Home (host machine) <br>
-**VM Manager:** Oracle VirtualBox <br>
-**Qualys edition:** Community Edition <br>
+Agent(s): Windows 11 Home (host machine) <br>
+VM Manager: Oracle VirtualBox <br>
+Qualys edition: Community Edition <br>
 
 Qualys is a popular tool for scanning vulnerabilities and for performing threat assessments on connected endpoints. For the initial setup, we will need a virtual machine manager (I will be using <a href="https://www.virtualbox.org/" target="_blank" rel="noopener noreferrer">Oracle VirtualBox</a>) to host the scanner appliance and to establish a connection from the scanner to the machine(s) of choice (in this documentation, just the one Windows 11 machine). 
 
@@ -73,8 +65,8 @@ We will start from the Qualys homepage right after creating and signing into an 
 <img width="344" height="161" alt="image" src="https://github.com/user-attachments/assets/028b6db3-8bbd-4ef6-92d6-48f7ee506af3" />
 
 Fill in:
-- TestVA
-- VMWare ESXi, vCenter Server (standard)
+* TestVA
+* VMWare ESXi, vCenter Server (standard)
 
 
 <img width="364" height="137" alt="image" src="https://github.com/user-attachments/assets/6dcebe06-a3a0-4842-9bde-7372a3386e05" />
@@ -103,7 +95,7 @@ Start the scanner VM by double-clicking it or selecting it and pressing **Start*
 
 <img width="414" height="176" alt="image" src="https://github.com/user-attachments/assets/033329b5-55fe-4a0c-bf95-f858ddbd6a04" />
 
-Enter **personalization code** obtained earlier.
+Enter personalization code obtained earlier.
 
 > **Note:** To view mouse once in the scanner VM, press right CTRL.
 
@@ -120,23 +112,23 @@ Virtual appliance should now be listed.
 <a name="setting-configurations-anchor-point"></a>
 ## Setting Configurations
 
-Set up the IP range the scanner is allowed to scan. The Qualys Community Edition restricts scans to **19 devices**.
+Set up the IP range the scanner is allowed to scan. The Qualys Community Edition restricts scans to 19 devices.
 
 In the Qualys homepage navigate to:
 
 **Scans > New > IP Tracked Addresses > Subscription IPs**
 
-Input desired IP range (e.g., `192.168.0.2-192.168.0.18`) and press **Add**.
+Input desired IP range (e.g., `192.168.0.2-192.168.0.18`) and press Add.
 
 <img width="627" height="174" alt="image" src="https://github.com/user-attachments/assets/3894302e-364d-4756-9e87-18b9ccd8b8a6" />
 
 
-> **Note:** For this lab, the Host-Only adapter IP `192.168.57.1` is used in a **dual-adapter setup**: NAT + Host-Only. Adapter 1 must be NAT for proper DNS and cloud connectivity.
+> **Note:** For this lab, the Host-Only adapter IP `192.168.57.1` is used in a dual-adapter setup: NAT + Host-Only. Adapter 1 must be NAT for proper DNS and cloud connectivity.
 
 To view your IP address on Windows:
 
-- Type `cmd` into the Search bar of the Windows taskbar and press `Enter`
-- Type in `ipconfig` into the shell to view all network adapters. Use the **Host-Only adapter** for scanning. The NAT/internet-facing adapter is for uploading results
+* Type `cmd` into the Search bar of the Windows taskbar and press `Enter`
+* Type in `ipconfig` into the shell to view all network adapters. Use the Host-Only adapter for scanning. The NAT/internet-facing adapter is for uploading results
 
 ```bash
 Ethernet adapter Ethernet 3:
@@ -149,13 +141,13 @@ Ethernet adapter Ethernet 3:
 To simplify the process of assigning the Host-Only adapter, statically assign the IP address and reserve its address in the router's DHCP.
 
 #### How to set static private IP address (Windows):
-1. Open **Control Panel** > Network and Internet > Network and Sharing Center > Change adapter settings
+1. Open Control Panel > Network and Internet > Network and Sharing Center > Change adapter settings
 2. Right-click the host-only adapter > Properties
-3. Select **Internet Protocol Version 4 (TCP/IPv4)** > Properties > Use the following IP address:
+3. Select Internet Protocol Version 4 (TCP/IPv4) > Properties > Use the following IP address:
    * IP Address: Desired IP that is not currently in use
    * Subnet mask: Corresponding subnet
    * Default gateway: leave blank (host-only)
-4. Press **OK**
+4. OK
 
 <img width="722" height="363" alt="image" src="https://github.com/user-attachments/assets/ad7a5f0f-0b58-4835-a2be-03e17791cec2" />
 
@@ -179,8 +171,8 @@ Fill in:
 
 <img width="714" height="851" alt="image" src="https://github.com/user-attachments/assets/7a9755e0-0d1e-4446-8224-ab23cb17ed32" />
 
-**Unauthenticated scan:** scans externally-facing ports/services <br>
-**Authenticated scan:** uses credentials for a deeper assessment
+Unauthenticated scan: scans externally-facing ports/services <br>
+Authenticated scan: uses credentials for a deeper assessment
 
 ### Unauthenticated Scan
 **Scans > New > Scan**
@@ -203,14 +195,14 @@ Settings needed:
   * This will enable remote users to modify registry settings. This allows Qualys as a remote system to query installed software, patch levels, OS configuration, and security policies. Without it, Qualys would have many checks fall to the "potentially vulnerable" state
 * Enable and start `Server` (Services > `Server` > Right-click > Properties > Startup Type: Automatic > Apply > Right-click > Start)
   * Allows remote systems to connect over ports 139 and 445 (NetBIOS and TCP/IP). This allows Qualys to authenticate with Windows credentials and to enumerate files, services, and permissions
-* Enable **File and Printer Sharing** for the network profile (Manage advanced sharing settings > Turn on **File and Printer Sharing)
+* Enable File and Printer Sharing for the network profile (Manage advanced sharing settings > Turn on File and Printer Sharing)
     * Allows inbound file-sharing connections. This allows Qualys to bypass the firewall to reach SMB services
 * Disable UAC prompts (Change User Account Control settings > Never notify > OK)
   * Reduces privilege separation for local admin accounts. This allows Qualys to access admin credentials fully, remotely, without checks failing or returning incomplete data from downgraded admin tokens
 * Disable remote UAC filtering for local admins (Registry Editor > Computer\HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System > New DWORD (32-Bit) Value > `LocalAccountTokenFilterPolicy` = 1)
   * Local admins get full admin rights remotely. This allows Qualys to do authenticated scans properly without checks silently failing or _appearing_ to succeed
 
-> **Note:** These settings should be **temporary** and reverted after scanning. While there is no real risk as only machines on the 192.168.57.0/24 range can connect during the scan (and there are no other machines on the 192.168.57.0/24 range), leaving these settings enabled weakens protections and creates a bigger attack vector. Thus, we must revert these settings after authenticated scanning. These practices align with industry standard of only temporarily enabling these settings/managing them via group policy/using domain credentials.
+> **Note:** These settings should be temporary and reverted after scanning. While there is no real risk as only machines on the 192.168.57.0/24 range can connect during the scan (and there are no other machines on the 192.168.57.0/24 range), leaving these settings enabled weakens protections and creates a bigger attack vector. Thus, we must revert these settings after authenticated scanning. These practices align with industry standard of only temporarily enabling these settings/managing them via group policy/using domain credentials.
 > 
 > <a href="https://github.com/alex-mtran/windows-authenticated-scan-setup" target="_blank" rel="noopener noreferrer">PowerShell automation scripts for enabling and disabling scan settings</a>
 
@@ -248,11 +240,11 @@ Launch the authenticated scan like the unauthenticated one, changing the title a
 
 <img width="996" height="528" alt="image" src="https://github.com/user-attachments/assets/65555575-a85a-4f0e-b26c-bbe06aab1ac5" />
 
-While authenticated scans are not strictly required every time, they are **highly recommended for regular vulnerability management** due to their comprehensive and accurate results. 
+While authenticated scans are not strictly required every time, they are highly recommended for regular vulnerability management due to their comprehensive and accurate results and will be the default scan type of this homelab.
 
-**A balanced strategy combines:**
-- **Authenticated scans** as the primary method for detailed, ongoing assessment
-- **Unauthenticated scans** periodically to simulate an external attacker's view and validate exposure
+A balanced strategy combines:
+* Authenticated scans as the primary method for detailed, ongoing assessment
+* Unauthenticated scans periodically to simulate an external attacker's view and validate exposure
 
 This dual approach ensures both internal security hygiene and external attack surface visibility.
 
@@ -388,8 +380,8 @@ This orchestration ensures the target machine and scanner are online with proper
 
 ---
 
-<a name="logs-and-remediation-anchor-point"></a>
-## Logs and Remediation
+<a name="logs-remediation-and-reports-anchor-point"></a>
+## Logs Remediation and Reports
 
 #### Severity Levels and Types:
 
@@ -399,54 +391,51 @@ This orchestration ensures the target machine and scanner are online with proper
 
 When prioritizing vulnerabilities for remediation, follow this strategy:
 
-1. **Severity first**: Address vulnerabilities by risk level, starting with Critical and High severity findings
-2. **Age second**: For vulnerabilities of the same severity, prioritize older detections (first discovered date)
+1. Severity: Address vulnerabilities by risk level, starting with Critical and High severity findings
+2. Age: For vulnerabilities of the same severity, prioritize older detections (first discovered date)
 
 This approach maximizes remediation value by:
-- Mitigating the highest-impact threats first
-- Reducing exposure time for equally severe vulnerabilities (older findings have been exploitable longer, increasing likelihood of compromise)
+* Mitigating the highest-impact threats first
+* Reducing exposure time for equally severe vulnerabilities (older findings have been exploitable longer, increasing likelihood of compromise)
 
 #### Example vulnerability:
 
 <img width="995" height="543" alt="image" src="https://github.com/user-attachments/assets/b046a894-15d8-4231-ac92-387384242b83" />
 
-**Key fields to review:**
+Key fields to review:
 
-- **QID (Qualys ID)**: Unique identifier for the vulnerability (e.g., `82005`)
-- **Title**: Descriptive name of the vulnerability (e.g., "Predictable TCP Initial Sequence Numbers Vulnerability")
-- **Severity**: Risk level and vulnerability type (indicated by number and color coding respectively)
-- **Category**: Vulnerability classification (e.g., `TCP/IP`)
-- **CVE IDs**: Industry-standard Common Vulnerabilities and Exposures identifiers for cross-referencing
+* QID (Qualys ID): Unique identifier for the vulnerability (e.g., `82005`)
+* Title: Descriptive name of the vulnerability (e.g., "Predictable TCP Initial Sequence Numbers Vulnerability")
+* Severity: Risk level and vulnerability type (indicated by number and color coding respectively)
+* Category: Vulnerability classification (e.g., `TCP/IP`)
+* CVE IDs: Industry-standard Common Vulnerabilities and Exposures identifiers for cross-referencing
 
-**Understanding the risk:**
+Understanding the risk:
 
-1. **THREAT**: Explains what the vulnerability is and how it can be exploited
-2. **IMPACT**: Describes the potential consequences if exploited (e.g., session hijacking, spoofing, connection disruption)
-3. **EXPLOITABILITY**: Links to proof-of-concept exploits or references from Exploit-DB, indicating active exploitation risk
+1. Threat: Explains what the vulnerability is and how it can be exploited
+2. Impact: Describes the potential consequences if exploited (e.g., session hijacking, spoofing, connection disruption)
+3. Exploitability: Links to proof-of-concept exploits or references from Exploit-DB, indicating active exploitation risk
 
-**Steps to patch/remediate:**
+Steps to patch/remediate:
 
-1. **SOLUTION**: Provides specific remediation guidance
-   - May include OS updates, configuration changes, or vendor patches
-   - Often contains direct links to vendor advisories or patches
+1. Solution: Provides specific remediation guidance
+   * May include OS updates, configuration changes, or vendor patches
+   * Often contains direct links to vendor advisories or patches
 
-2. **Check Vendor References**: Follow links to official vendor documentation
-   - Microsoft Security Bulletins (MS##-###)
-   - Cisco advisories
-   - CVE databases for additional context
+2. Check Vendor References: Follow links to official vendor documentation
+   * CVE databases for additional context
 
-3. **Apply appropriate fixes**:
-   - **OS-level patches**: Update systems through vendor patch management
-   - **Configuration changes**: Modify settings as specified (e.g., TCP/IP stack hardening)
-   - **Workarounds**: Implement temporary mitigations if patches are unavailable
+3. Apply appropriate fixes:
+   * OS-level patches: Update systems through vendor patch management
+   * Configuration changes: Modify settings as specified (e.g., TCP/IP stack hardening)
+   * Workarounds: Implement temporary mitigations if patches are unavailable
 
-**After applying remediation:**
+After applying remediation:
 
-1. **Re-scan the affected asset**: Run a targeted or full scan on the remediated system
-2. **Verify QID removal**: Confirm the specific QID no longer appears in scan results
-3. **Check "Service Modified" date**: Updated scan results should reflect recent changes
-4. **Review "PCI Vuln" status**: If applicable, ensure compliance requirements are met
-5. **Report remediation and patch**: Write a report in your change management system with QID reference and scan dates
+1. Re-scan the affected asset
+2. Verify QID removal
+3. Ensure compliance requirements are met
+4. Report remediation and patch: Write a report in your change management system with QID reference and scan dates
 
 ---
 
