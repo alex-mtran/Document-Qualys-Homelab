@@ -437,6 +437,40 @@ After applying remediation:
 3. Ensure compliance requirements are met
 4. Report remediation and patch: Write a report in your change management system with QID reference and scan dates
 
+### Reports
+
+#### Report Template
+
+In the Qualys homepage navigate to:
+
+**Reports > Templates > New > Scan Template...**
+
+<img width="570" height="459" alt="image" src="https://github.com/user-attachments/assets/b4bdbe80-0021-4665-ab30-a7134ecd1981" />
+
+<img width="718" height="811" alt="image" src="https://github.com/user-attachments/assets/7418e745-62dd-42dd-b854-2f8d0508e34b" />
+
+<img width="715" height="743" alt="image" src="https://github.com/user-attachments/assets/1c547e14-b88a-4432-9d6b-be5da72b5f72" />
+
+<img width="716" height="823" alt="image" src="https://github.com/user-attachments/assets/5a98d998-8949-4402-9965-54b5427f2446" />
+
+<img width="714" height="820" alt="image" src="https://github.com/user-attachments/assets/a5b4d50a-f056-4ac7-bed0-396173334138" />
+
+<img width="717" height="819" alt="image" src="https://github.com/user-attachments/assets/b250fee9-cbab-4aa7-9e1f-f683c7cf6d54" />
+
+<img width="721" height="818" alt="image" src="https://github.com/user-attachments/assets/849d1179-9abc-4a1f-a294-518cb8c21215" />
+
+#### Create Report
+
+In the Qualys homepage navigate to:
+
+**Reports > Report > New > Template Based... Scan Report**
+
+<img width="463" height="307" alt="image" src="https://github.com/user-attachments/assets/9903dbb8-0f72-4faa-a006-fbd566d2e10d" />
+
+<img width="999" height="666" alt="image" src="https://github.com/user-attachments/assets/b4a682fa-1860-4769-a712-a49fba774277" />
+
+Here, I opt for a monthly report that will summarize all of the machines and their vulnerabilities, sorted by hosts.
+
 ---
 
 <a name="vulnerability-exceptions-anchor-point"></a>
@@ -444,12 +478,12 @@ After applying remediation:
 
 After systematically remediating vulnerabilities identified in the authenticated scan report, several findings remained that did not need remediation. These fell into two categories:
 
-**False Positives**
+**False Positives**   
 Vulnerabilities flagged due to outdated scanner signatures that do not account for modern operating system protections.
 
 *Example: QID 82005* - Predictable TCP Initial Sequence Numbers vulnerability applies only to legacy operating systems (Windows NT/95/98). Modern Windows systems implement RFC 6528-compliant randomized TCP sequence number generation, rendering this detection obsolete.
 
-**Accepted Risk**  
+**Accepted Risk**   
 Technically valid vulnerabilities that pose minimal risk given the controlled home lab environment and existing security controls.
 
 *Example: QID 92064* - SMBv2 Signing Not Required poses negligible risk in a home lab network secured with WPA3 encryption. Man-in-the-middle exploitation is likely minimal given the trusted network perimeter and wireless security.
