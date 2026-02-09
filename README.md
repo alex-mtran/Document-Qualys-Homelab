@@ -525,7 +525,7 @@ Run the `Basic Net Scan` again to verify that excluded QIDs no longer appear in 
 <a name="challenges-solutions-anchor-point"></a>
 ## Challenges Solutions
 
-A mismatch between the Qualys scanner’s network configuration and VirtualBox adapters caused DNS failures. Initially, the scanner was assigned a host-only IP (`192.168.57.0/24`) while attached only to NAT. Because the scanner was manually configured with an IP address, gateway, and DNS settings from the Host-Only network—while no Host-Only adapter was present—the scanner attempted to use a non-existent gateway. This prevented cloud connectivity and triggered LAN DNS errors.
+A mismatch between the Qualys scanner’s network configuration and VirtualBox adapters caused DNS failures. Initially, the scanner was assigned a host-only IP (`192.168.57.0/24`) while attached only to NAT. Because the scanner was manually configured with an IP address, gateway, and DNS settings from the Host-Only network while no Host-Only adapter was present, the scanner attempted to use a non-existent gateway. This prevented cloud connectivity and triggered LAN DNS errors.
 
 <a href="https://www.youtube.com/watch?v=Fhdxk4bmJCs" target="_blank" rel="noopener noreferrer">For more information on the different network adapter settings in VirtualBox</a>
 
@@ -537,6 +537,8 @@ A mismatch between the Qualys scanner’s network configuration and VirtualBox a
 
 Future expansion:
 * Add more devices (IoT, network infrastructure, different operating systems, etc.)
-  * Sort inventory using asset tags
+  * Sort inventory using asset tags (IoT, endpoints, Windows, etc.)
+  * Change/Add bridged adapter to network adapter configuration for connectivity to home network
 * Integrate Active Directory for group policy management
-* Configure authenticated scans and automated patching via VMDR and Patch Management
+* Configure automated patching via VMDR and Patch Management
+  * Deploy cloud agents to endpoints
