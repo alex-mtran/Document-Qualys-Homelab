@@ -349,7 +349,7 @@ For each task press Create Task...
 
 * Triggers
 
-<img width="584" height="509" alt="image" src="https://github.com/user-attachments/assets/a66cc432-28a0-4cac-a21c-dc769fe47d04" />
+<img width="587" height="512" alt="image" src="https://github.com/user-attachments/assets/d743cd91-6042-431f-9e4c-a25d516e282c" />
 
 * Actions > New...
    * Program/script: powershell.exe -ExecutionPolicy Bypass -NoProfile -File "C:\FilePathTo\Disable-Authentication-Scan-Settings.ps1"
