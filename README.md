@@ -48,11 +48,43 @@ This approach is NOT recommended for production or enterprise environments. In e
 <a name="initial-setup-anchor-point"></a>
 ## Initial Setup
 
-Agent(s): Windows 11 Home (host machine) <br>
+Agent: Windows 11 Home (host machine) <br>
 VM Manager: Oracle VirtualBox <br>
 Qualys edition: Community Edition <br>
 
-Qualys is a popular tool for scanning vulnerabilities and for performing threat assessments on connected endpoints. For the initial setup, we will need a virtual machine manager (I will be using <a href="https://www.virtualbox.org/" target="_blank" rel="noopener noreferrer">Oracle VirtualBox</a>) to host the scanner appliance and to establish a connection from the scanner to the machine(s) of choice (in this documentation, just the one Windows 11 machine). 
+### Setup Architecture
+
+<img width="558" height="619" alt="image" src="https://github.com/user-attachments/assets/dbb6aab3-d0cf-4cbf-9abe-a6b9bac24b34" />
+
+#### Architecture Details
+NAT Network (Green - 10.0.2.0/24):
+* Provides internet connectivity to the VM without exposing the VM directly to home network
+
+Host-Only Network (Red - 192.168.57.0/24):
+* Isolated network for VM-to-host communication that allows Qualys scanner to scan the Windows 11 host machine
+
+Qualys Cloud ↔ Gateway (192.168.50.1)
+* "Updates and Telemetry"
+* Bidirectional communication between Qualys scanner and Qualys Cloud Platform
+   * Outbound (Scanner → Cloud): Scanner sends vulnerability scan results, system status, heartbeat signals
+   * Inbound (Cloud → Scanner): Cloud sends scan job assignments, vulnerability signature updates, configuration changes
+
+Gateway (192.168.50.1) ↔ Windows 11 (192.168.50.194)
+* "Internet Traffic"
+* Routes all internet-bound traffic from home network to the outside and vice versa
+
+Windows 11 (192.168.50.194) ↔ Gateway (10.0.2.2)
+* "Cloud/Scanner connection"
+* VirtualBox software routes traffic between the Windows host and the virtual NAT network
+* Changes VM's private IP (10.0.2.15) to host's IP (192.168.50.194) for internet communication
+
+Qualys Scanner Appliance → Windows 11 (192.168.57.1)
+* "Scanning"
+* Qualys scanner is ran on an isolated network interface between the Windows host on the host-only network
+
+#
+
+Qualys is a popular tool for scanning vulnerabilities and for performing threat assessments on connected endpoints. For the initial setup, we will need a virtual machine manager (I will be using <a href="https://www.virtualbox.org/" target="_blank" rel="noopener noreferrer">Oracle VirtualBox</a>) to host the scanner appliance and to establish a connection from the scanner to the machine of choice (in this documentation, just the one Windows 11 machine). 
 
 We will start from the Qualys homepage right after creating and signing into an account. <a href="https://www.qualys.com/community-edition" target="_blank" rel="noopener noreferrer">Qualys Community Edition</a>
 
