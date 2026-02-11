@@ -54,7 +54,7 @@ Qualys edition: Community Edition <br>
 
 ### Setup Architecture
 
-<img width="558" height="619" alt="image" src="https://github.com/user-attachments/assets/dbb6aab3-d0cf-4cbf-9abe-a6b9bac24b34" />
+<img width="681" height="748" alt="image" src="https://github.com/user-attachments/assets/287ec44f-45cc-4dfa-8f62-3314ce252043" />
 
 #### Architecture Details
 NAT Network (Green - 10.0.2.0/24):
@@ -74,13 +74,13 @@ Gateway (192.168.50.1) ↔ Windows 11 (192.168.50.194)
 * Routes all internet-bound traffic from home network to the outside and vice versa
 
 Windows 11 (192.168.50.194) ↔ Gateway (10.0.2.2)
-* "Cloud/Scanner connection"
+* "Cloud/Scanner traffic"
 * VirtualBox software routes traffic between the Windows host and the virtual NAT network
 * Changes VM's private IP (10.0.2.15) to host's IP (192.168.50.194) for internet communication
 
-Qualys Scanner Appliance → Windows 11 (192.168.57.1)
+Qualys Scanner Appliance ↔ Windows 11 (192.168.57.1)
 * "Scanning"
-* Qualys scanner is ran on an isolated network interface between the Windows host on the host-only network
+* Qualys scanner scans the host Windows 11 machine on the isolated host-only network
 
 #
 
