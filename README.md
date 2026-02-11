@@ -52,7 +52,7 @@ Agent: Windows 11 Home (host machine) <br>
 VM Manager: Oracle VirtualBox <br>
 Qualys edition: Community Edition <br>
 
-### Setup Architecture
+### Project Architecture
 
 <img width="681" height="748" alt="image" src="https://github.com/user-attachments/assets/287ec44f-45cc-4dfa-8f62-3314ce252043" />
 
