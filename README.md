@@ -52,35 +52,15 @@ Agent: Windows 11 Home (host machine) <br>
 VM Manager: Oracle VirtualBox <br>
 Qualys edition: Community Edition <br>
 
-### Project Architecture
+### Lab Architecture
 
 <img width="681" height="748" alt="image" src="https://github.com/user-attachments/assets/287ec44f-45cc-4dfa-8f62-3314ce252043" />
 
-#### Architecture Details
 NAT Network (Green - 10.0.2.0/24):
 * Provides internet connectivity to the VM without exposing the VM directly to home network
 
 Host-Only Network (Red - 192.168.57.0/24):
 * Isolated network for VM-to-host communication that allows Qualys scanner to scan the Windows 11 host machine
-
-Qualys Cloud ↔ Gateway (192.168.50.1)
-* "Updates and Telemetry"
-* Bidirectional communication between Qualys scanner and Qualys Cloud Platform
-   * Outbound (Scanner → Cloud): Scanner sends vulnerability scan results, system status, heartbeat signals
-   * Inbound (Cloud → Scanner): Cloud sends scan job assignments, vulnerability signature updates, configuration changes
-
-Gateway (192.168.50.1) ↔ Windows 11 (192.168.50.194)
-* "Internet Traffic"
-* Routes all internet-bound traffic from home network to the outside and vice versa
-
-Windows 11 (192.168.50.194) ↔ Gateway (10.0.2.2)
-* "Cloud/Scanner traffic"
-* VirtualBox software routes traffic between the Windows host and the virtual NAT network
-* Changes VM's private IP (10.0.2.15) to host's IP (192.168.50.194) for internet communication
-
-Qualys Scanner Appliance ↔ Windows 11 (192.168.57.1)
-* "Scanning"
-* Qualys scanner scans the host Windows 11 machine on the isolated host-only network
 
 #
 
