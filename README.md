@@ -54,7 +54,7 @@ Qualys edition: Community Edition <br>
 
 ### Lab Architecture
 
-<img width="681" height="748" alt="image" src="https://github.com/user-attachments/assets/287ec44f-45cc-4dfa-8f62-3314ce252043" />
+<img width="678" height="746" alt="image" src="https://github.com/user-attachments/assets/d0beaf84-1fcf-48e0-9210-2ec8d1522623" />
 
 NAT Network (Green - 10.0.2.0/24):
 * Provides internet connectivity to the VM without exposing the VM directly to home network
