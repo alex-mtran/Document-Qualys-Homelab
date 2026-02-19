@@ -9,7 +9,7 @@ Of the Qualys Vulnerability Management Lifecycle phase, this documentation will 
 
 Qualys offers two primary approaches for vulnerability management: the **Virtual Scanner Appliance** and **Cloud Agent**. In an ideal, comprehensive homelab environment, both would be deployed as they provide distinct yet complementary scanning capabilities.
 
-For this homelab, I chose to implement only the Virtual Scanner Appliance for the following reasons:
+For this homelab, I chose to implement **only** the Virtual Scanner Appliance for the following reasons:
 
 * Static environment: My homelab consists of on-premise assets with controlled, predictable configurations
 * Sufficient coverage: Network-based scanning adequately covers my use case for point-in-time vulnerability assessments
@@ -54,13 +54,13 @@ Qualys edition: Community Edition <br>
 
 ### Lab Architecture
 
-<img width="678" height="746" alt="image" src="https://github.com/user-attachments/assets/d0beaf84-1fcf-48e0-9210-2ec8d1522623" />
+<img width="639" height="700" alt="image" src="https://github.com/user-attachments/assets/c48561d4-b81c-4f0f-bab1-c3c2074e54d3" />
 
 NAT Network (Green - 10.0.2.0/24):
-* Provides internet connectivity to the VM without exposing the VM directly to home network
+* Provides internet connectivity to the VM without exposing the VM directly by hiding its masking its IP address as the host machine's
 
 Host-Only Network (Red - 192.168.57.0/24):
-* Isolated network for VM-to-host communication that allows Qualys scanner to scan the Windows 11 host machine
+* Provides an isolated network for VM-to-host communication that allows for reduced exposure to unauthorized access during scanning of host machine
 
 #
 
@@ -547,10 +547,13 @@ A mismatch between the Qualys scanner’s network configuration and VirtualBox a
 
 > **Note:** This dual-homed configuration aligns with common industry practices by separating management and cloud communication traffic from internal scanning traffic, restoring full scanner functionality in both scenarios.
 
-Future expansion:
+Future enhancements:
 * Add more devices (IoT, network infrastructure, different operating systems, etc.)
   * Sort inventory using asset tags (IoT, endpoints, Windows, etc.)
-  * Change/Add bridged adapter to network adapter configuration for connectivity to home network
+  * Change network adapter configuration to accomodate and provide necessary security
+     * Change/Add scanner bridged adapter to network adapter configuration for direct connectivity for access to other devices on the home network
+     * Create a scanner VLAN for dedicated scanning tooling which must route through the router firewall to access home network and IoT network
 * Integrate Active Directory for group policy management
 * Configure automated patching via VMDR and Patch Management
+  * Requires higher level Qualys edition
   * Deploy cloud agents to endpoints
