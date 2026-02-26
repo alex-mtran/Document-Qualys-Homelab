@@ -202,7 +202,8 @@ Fill in:
 
 ### Authenticated Scan
 
-Settings needed:
+#### Enable Settings
+
 * Enable and start `Remote Registry` (Services > `Remote Registry` > Right-click > Properties > Startup Type: Automatic > Apply > OK > Right-click > Start).
   * This will enable remote users to modify registry settings. This allows Qualys as a remote system to query installed software, patch levels, OS configuration, and security policies. Without it, Qualys would have many checks fall to the "potentially vulnerable" state
 * Enable and start `Server` (Services > `Server` > Right-click > Properties > Startup Type: Automatic > Apply > Right-click > Start)
@@ -217,6 +218,17 @@ Settings needed:
 > **Note:** These settings should be temporary and reverted after scanning. While there is no real risk as only machines on the 192.168.57.0/24 range can connect during the scan (and there are no other machines on the 192.168.57.0/24 range), leaving these settings enabled weakens protections and creates a bigger attack vector. Thus, we must revert these settings after authenticated scanning. These practices align with industry standard of only temporarily enabling these settings/managing them via group policy/using domain credentials.
 > 
 > <a href="https://github.com/alex-mtran/windows-authenticated-scan-setup" target="_blank" rel="noopener noreferrer">PowerShell automation scripts for enabling and disabling scan settings</a>
+
+#### Create Pure Local Scan Account
+
+Run **CMD** as administrator and input the following commands:
+```bash
+net user QualysScan YourPassword123! /add
+net localgroup administrators QualysScan /add
+```
+
+In the next step for configuring an authenticated scan in Qualys, provide the local username and password created from this step.
+> **Note:** In the example above, the local account would have credentials: QualysScan/YourPassword123!
 
 #### Configure Authenticated Scan in Qualys
 
